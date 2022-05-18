@@ -53,9 +53,6 @@
                             <li class="nav-item">
                                 <a href="/dashboard/hotel-facilities" class="nav-link {{ Request::is('dashboard/hotel-facilities*') ? 'active' : '' }}">Fasilitas Hotel</a>
                             </li>
-                            <li class="nav-item me-3">
-                                <a href="/dashboard/reservations" class="nav-link {{ Request::is('dashboard/reservations*') ? 'active' : '' }}">Data Reservasi</a>
-                            </li>
                             <li class="nav-item text-nowrap ms-3">
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
