@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 01 Apr 2022 pada 10.58
+-- Waktu pembuatan: 18 Bulan Mei 2022 pada 08.00
 -- Versi server: 10.4.21-MariaDB
 -- Versi PHP: 8.0.11
 
@@ -38,8 +38,33 @@ CREATE TABLE `bookings` (
   `check_out` datetime DEFAULT NULL,
   `status` enum('booking','check_in','check_out') COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `jumlah_kamar` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data untuk tabel `bookings`
+--
+
+INSERT INTO `bookings` (`id`, `order_name`, `user_id`, `email`, `telephone`, `room_id`, `check_in`, `check_out`, `status`, `created_at`, `updated_at`, `jumlah_kamar`) VALUES
+(1, 'anissaalifia', 6, 'test@test.com', '81216793838', 2, '2022-05-17 09:34:00', '2022-05-19 09:34:00', 'check_out', '2022-05-16 19:34:52', '2022-05-16 19:36:45', 1),
+(2, 'anissaalifiaw', 6, 'anissaalifia6@gmail.com', '81216793838', 2, '2022-05-17 11:10:00', '2022-05-18 11:10:00', 'booking', '2022-05-16 21:10:10', '2022-05-16 21:10:10', 1),
+(3, 'cece', 9, 'subscriber@email.com', '81216793838', 2, '2022-05-19 14:40:00', '2022-05-28 14:40:00', 'booking', '2022-05-17 00:40:09', '2022-05-17 00:40:09', 11);
+
+--
+-- Trigger `bookings`
+--
+DELIMITER $$
+CREATE TRIGGER `pemesanan_kamar` AFTER UPDATE ON `bookings` FOR EACH ROW BEGIN
+	IF new.status='check_in' THEN
+    	UPDATE rooms set number_of_rooms = number_of_rooms-old.jumlah_kamar WHERE id = old.room_id;
+    END IF;
+    IF new.status='check_out' THEN
+    	UPDATE rooms set number_of_rooms = number_of_rooms+old.jumlah_kamar WHERE id = old.room_id;
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -62,8 +87,8 @@ CREATE TABLE `facilities` (
 --
 
 INSERT INTO `facilities` (`id`, `facility_name`, `facility_type`, `description`, `image`, `created_at`, `updated_at`) VALUES
-(1, 'tv', 'room', 'tv', 'uploaded-images/2pVxyFl8K66ruqDGwKFzhJrwWVkfmOcZzSPYAVCL.png', '2022-04-01 01:21:45', '2022-04-01 01:21:45'),
-(2, 'kids station', 'hotel', 'tempat jual maninan', 'uploaded-images/zKMZ7wX3xxI5sVqaoM0beTa1JuPW9FyvuKduxfgD.png', '2022-04-01 01:22:07', '2022-04-01 01:22:07');
+(4, 'meeting room', 'hotel', 'dr', 'uploaded-images/NQoElGmO7NbRKU0ALRKLXZbAoDKENblWuxxx5oah.jpg', '2022-05-16 19:29:46', '2022-05-16 19:29:46'),
+(5, 'kids station', 'room', 'a', 'uploaded-images/h5AMIknwUz0uMwwbQHagmqjr49TrSpGZPcom8Hz7.jpg', '2022-05-16 19:33:53', '2022-05-16 19:33:53');
 
 -- --------------------------------------------------------
 
@@ -158,7 +183,7 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` (`id`, `room_type`, `number_of_rooms`, `facility_id`, `description`, `image`, `created_at`, `updated_at`) VALUES
-(1, 'single', '12', 1, 'single bad', 'uploaded-images/uw6ccZa01OvqmCv50G3nbe1KsZdV9pOCvuLEYaeh.jpg', '2022-04-01 01:22:34', '2022-04-01 01:22:34');
+(2, 'Suite rooms', '12', 5, 'ss', 'uploaded-images/0vSBsDCCXnizWwHMxJpoEjDaDbKGJqTq0fUyVIwD.jpg', '2022-05-16 19:34:25', '2022-05-16 19:34:25');
 
 -- --------------------------------------------------------
 
@@ -181,10 +206,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `username`, `password`, `role`, `created_at`, `updated_at`) VALUES
-(1, 'ANISSA ALIFIA PUTRI', 'ANISSAAP', '$2y$10$QgNtic/Z9fZCdXM8529rBugJI0hxU4HsbZF/cFj.o8hmN3cz3Xuru', 'hotel_guest', '2022-04-01 01:09:47', '2022-04-01 01:09:47'),
-(2, 'administrator', 'Admin_cece', '$2y$10$bmT7jW.2FZ3b9l7cspuFc.y1S/XyUQqBy90u/yo/EaTDH0OYuYTNa', 'administrator', NULL, '2022-04-01 01:20:48'),
-(3, 'administrator', 'administrator', '$2y$10$to2CNU5YwdIgwO8.IVWvYOWTiprQwzwk1poVQSMQRm6nCn6/IjmNa', 'administrator', '2022-04-01 01:19:44', '2022-04-01 01:19:44'),
-(4, 'Receptionist', 'receptionist_tya', '$2y$10$OkfUonofJ1oMqYNQACT6QuTvIGeRFgmAE8ZthWyZaFucNOOLE78LC', 'receptionist', '2022-04-01 01:23:46', '2022-04-01 01:23:46');
+(5, 'admin', 'administrator_1', '$2y$10$lPzP1MY0foJseU2E5WgYP.gDalkEZ8/Oh3WsZDHJNXr0/Nh6jrzVy', 'administrator', '2022-05-16 19:21:42', '2022-05-16 19:21:42'),
+(6, 'anissa', 'anissaalifia', '$2y$10$01cA0rhETwy2v1wahnqsmuF/RDyY2AexS4U2y97JDbjL1OwUo1lRC', 'hotel_guest', '2022-05-16 19:32:47', '2022-05-16 19:32:47'),
+(7, 'receptionist', 'receptionist_1', '$2y$10$/ZyFrL7S.1/Wg8JMcu4qBON4VHZFO6WrUgcd.1/vYZty1qz4RZmBW', 'receptionist', '2022-05-16 19:35:27', '2022-05-16 19:35:27'),
+(8, 'cece', 'cece123456', '$2y$10$sadtbfoXLzZIj4b2KRtDM.RWri/BCgBwK/oAI/JRDIWFc3BRU/AJa', 'hotel_guest', '2022-05-17 00:39:14', '2022-05-17 00:39:14'),
+(9, 'cece', 'cece1234567', '$2y$10$a3qgfwZrjp64XhU193AP4OqnvpzIhJ/t.bFWZxxq7mx8NQyn/KZRu', 'hotel_guest', '2022-05-17 00:39:41', '2022-05-17 00:39:41');
 
 --
 -- Indexes for dumped tables
@@ -254,13 +280,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT untuk tabel `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `facilities`
 --
 ALTER TABLE `facilities`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `failed_jobs`
@@ -284,13 +310,13 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT untuk tabel `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)

@@ -37,7 +37,7 @@ class BookingController extends Controller
 
         $validateBooking['user_id'] = auth()->user()->id;
         $validateBooking['status'] = 'booking';
-
+ 
         Booking::create($validateBooking);
 
         return redirect('/dashboard')->with('success', 'New Reservation has been added');
